@@ -1,0 +1,2 @@
+cloudscraper==1.2.60
+rich==12.4.1
