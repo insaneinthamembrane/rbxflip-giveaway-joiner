@@ -60,8 +60,7 @@ with open('config.json', encoding='utf-8') as f:
 
 with console.status('Searching for giveaways...', spinner='bouncingBall') as status:
     while 1:
-        giveaways = fetch_giveaways()
-        if giveaways:
+        if giveaways := fetch_giveaways():
             for giveaway in giveaways:
                 for user in User.users:
                     user.join_giveaway(giveaway)
