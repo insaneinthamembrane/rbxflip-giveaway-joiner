@@ -1,7 +1,7 @@
-import time
 import json
-import cloudscraper
+import time
 
+import cloudscraper
 from rich.console import Console
 
 console = Console()
@@ -21,7 +21,7 @@ def fetch_giveaways():
     except Exception:
         return
 
-    return res['data']['giveaways']
+    return res.get('data').get('giveaways')
 
 
 class User:
@@ -30,15 +30,15 @@ class User:
     def __init__(self, token):
         self.joined = set()
         self.headers = {'authorization': f'Bearer {token}'}
-        User.users.append(self)
         self.identifier = f'Account #{User.users.index(self) + 1}'
+        User.users.append(self)
 
     def join_giveaway(self, giveaway):
-        giveaway_id = giveaway['_id']
+        giveaway_id = giveaway.get('_id')
         if giveaway_id in self.joined or giveaway['status'] == 'Closed':
             return
 
-        prize = giveaway['item']['assetId']
+        prize = giveaway.get('item').get('assetId')
 
         console.print(f'[{self.identifier}] [bold green]Attemping to join giveaway {giveaway_id}[/]')
         req = session.put(f'https://legacy.rbxflip-apis.com/giveaways/{giveaway_id}', headers=self.headers)
@@ -53,17 +53,17 @@ class User:
         self.joined.add(giveaway_id)
 
 
+import itertools
+
 with open('config.json', encoding='utf-8') as f:
     config = json.load(f)
-    for token in config['access_tokens']:
+    for token in config.get('access_tokens'):
         User(token)
 
 with console.status('Searching for giveaways...', spinner='bouncingBall') as status:
     while 1:
-        giveaways = fetch_giveaways()
-        if giveaways:
-            for giveaway in giveaways:
-                for user in User.users:
-                    user.join_giveaway(giveaway)
+        if giveaways := fetch_giveaways():
+            for giveaway, user in itertools.product(giveaways, User.users):
+                user.join_giveaway(giveaway)
 
         time.sleep(20)

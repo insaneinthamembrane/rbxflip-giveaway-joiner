@@ -1,10 +1,9 @@
-# rbxflip giveaway joiner
+# Rbxflip Giveaway Joiner
 
 joins all open rbxflip giveaways
 
-## Installation / Usage
+## Installing Requirements
 
 ```bash
 pip install -r requirements.txt
 ```
-put your rbxflip access token(s) in the config
